@@ -71,4 +71,23 @@ M.some = function(src, f)
     return false
 end
 
+
+M.unset_all_signs = function(bufnr, sign_group)
+    vim.fn.sign_unplace(sign_group, {buffer = bufnr})
+end
+
+M.update_signs = function(stats, sign_group, buf_id, sign_priority)
+  M.unset_all_signs(buf_id, sign_group)
+
+  M.foreach(stats.lines.details, function(lnum)
+    local sign = 'CocCoverageUncovered';
+    if lnum.hit > 0 and stats.branches and stats.branches.converted then
+      -- could either be missing if no branches at current line or all branches could be taken
+      sign = stats.branches.converted[lnum.line] and 'CocCoverageCovered' or 'CocCoverageMissingBranch';
+    end
+
+    vim.fn.sign_place(0, sign_group, sign, buf_id, { lnum = lnum.line, priority = sign_priority });
+    end);
+end
+
 return M
