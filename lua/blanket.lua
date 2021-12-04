@@ -18,11 +18,16 @@ local default_config = {
 }
 
 local buf_enter_ag = "buf_enter_auto_group"
-
 local is_loaded = false
+local file_watcher = vim.loop.new_fs_event()
 
-local parseFile = function()
+parseFile = function()
+    file_watcher:stop()
     M.__cached_report = xml_converter.parse(M.__user_config.report_path)
+
+    file_watcher:start(M.__user_config.report_path, {}, vim.schedule_wrap(utils.debounce(
+        parseFile, 1000)
+    ))
 end
 
 local register_buf_enter_ag = function()
@@ -71,6 +76,7 @@ end
 
 M.stop = function()
     utils.unset_all_signs(M.__user_config.signs.sign_group)
+    file_watcher:stop()
     vim.cmd(string.format([[
         augroup %s
             autocmd!

@@ -44,6 +44,18 @@ M.flatten = function(t)
     return res
 end
 
+M.debounce = function(func, timeout)
+    local debounced = false
+
+    return function(...)
+        if not debounced then
+            debounced = true
+            func(...)
+            vim.defer_fn(function() debounced = false end, timeout)
+        end
+    end
+end
+
 M.reduce = function(src, f, target)
     for _, v in ipairs(src) do
         target = f(target, v)
