@@ -71,13 +71,20 @@ M.some = function(src, f)
     return false
 end
 
+M.expand_file_path = function(file_path)
+    return vim.fn.expandcmd(file_path)
+end
 
-M.unset_all_signs = function(bufnr, sign_group)
-    vim.fn.sign_unplace(sign_group, {buffer = bufnr})
+M.unset_all_signs = function(sign_group)
+    vim.fn.sign_unplace(sign_group)
+end
+
+M.unset_signs_in_buf = function(sign_group, buf_id)
+    vim.fn.sign_unplace(sign_group, { buffer = buf_id })
 end
 
 M.update_signs = function(stats, sign_group, buf_id, sign_priority)
-  M.unset_all_signs(buf_id, sign_group)
+  M.unset_signs_in_buf(sign_group, buf_id)
 
   M.foreach(stats.lines.details, function(lnum)
     local sign = 'CocCoverageUncovered';
