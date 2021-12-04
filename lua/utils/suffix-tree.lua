@@ -3,54 +3,42 @@ local methods = {}
 local function mknode()
     return {
         children = {},
-        value = nil
+        value = nil,
+        tombstone = false
     }
 end
 
 function methods:set(key, value)
     local cur_node = self.root
-    for x = #key, 1, -1 do
-        local child = cur_node.children[x]
+    for i = #key, 1, -1 do
+        local c = key:sub(i, i)
+        local child = cur_node.children[c]
         if child == nil then
             child = mknode()
-            cur_node.children[x] = child
+            cur_node.children[c] = child
         end
         cur_node = child
     end
     cur_node.value = value
+    cur_node.tombstone = true
 end
 
 function methods:get(key)
+    if self.root.children[key:sub(#key, #key)] == nil then
+        return nil
+    end
     local cur_node = self.root
 
-    for x = #key, 1, -1 do
-        local child = cur_node.children[x]
+    for i = #key, 1, -1 do
+        local c = key:sub(i, i)
+        local child = cur_node.children[c]
         if child == nil then
             break
         end
         cur_node = child
     end
 
-    -- print(vim.insepect(cur_node))
-
-    return cur_node.value
-    -- for x = #key - 1, 1, -1 do
-    --     cur_node = cur_node.childred[key[x + 1]]
-    --     if cur_node == nil then
-    --         print("not found")
-    --         return nil
-    --     end
-
-    --     local child = cur_node.children[x]
-    --     if child == nil then
-    --         print("found premature match")
-    --         return child.value
-    --     end
-    --     cur_node = child
-    -- end
-
-
-    -- return cur_node.childer[key[1]].value
+    return cur_node.tombstone and cur_node.value or nil
 end
 
 local function new()
