@@ -4,7 +4,6 @@ local xml_converter = require'converters.xml'
 local utils = require'utils'
 
 local default_config = {
-    prefix_path = "",
     report_path = nil,
     filetypes = nil,
     silent = true,
@@ -21,12 +20,12 @@ local buf_enter_ag = "buf_enter_auto_group"
 local is_loaded = false
 local file_watcher = vim.loop.new_fs_event()
 
-parseFile = function()
+ParseFile = function()
     file_watcher:stop()
     M.__cached_report = xml_converter.parse(M.__user_config.report_path)
 
     file_watcher:start(M.__user_config.report_path, {}, vim.schedule_wrap(utils.debounce(
-        parseFile, 1000)
+        ParseFile, 1000)
     ))
 end
 
@@ -51,7 +50,7 @@ M.refresh = function()
     end
 
     if M.__cached_report == nil then
-        parseFile()
+        ParseFile()
     end
 
     local buf_name = vim.api.nvim_buf_get_name(0)
@@ -94,7 +93,7 @@ M.set_report_path = function()
         function(user_input)
             if user_input then
                 M.__user_config.report_path = utils.expand_file_path(user_input)
-                parseFile()
+                ParseFile()
             end
 
         end
