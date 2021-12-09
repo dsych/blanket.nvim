@@ -13,7 +13,7 @@ This plugin provides a code coverage gutter in Neovim based on the Jacoco report
 
 # Configurations
 Only `report_path` is required, everything else is optional.
-```vim
+```lua
 
 lua << EOF
     require'blanket'.setup{
@@ -22,7 +22,7 @@ lua << EOF
         report_path = vim.fn.getcwd().."/target/site/jacoco/jacoco.xml",
         -- refresh gutter every time we enter java file
         -- defauls to empty - no autocmd is created
-        filetypes = "*.java",
+        filetypes = "java",
         -- for debugging purposes to see whether current file is present inside the report
         -- defaults to false
         silent = true,
@@ -45,9 +45,18 @@ EOF
 * `:lua require'blanket'.refresh()` - manually trigger a refresh of signs, useful when `filetype` property is not set
 * `:lua require'blanket'.set_report_path()` - change `report_path` to a new value and refresh the gutter based on the new report
 
+# Troubleshooting
+Before opening an issue, make sure to reproduce you problem with the minimal config from `examples/minimal.lua`.
+Run the following command from inside the plugin directory and record the error message:
+> `mvn -f ./examples/jacoco/pom.xml clean test && nvim --noplugin -u NONE -u ./examples/minimal.lua ./examples/jacoco/src/main/java/com/example/jacoco/MessageBuilder.java`
+
+The above will:
+1. Generate coverage report for a simple app with maven
+2. Launch vim with only `blanket.nvim` configured to look for report generated in the previous step
+
+> Alternatively, you can also just download the `minimal.lua` config, update the `report_path` to suite your needs and open the file of your liking.
+
 # Credits
 * [xml2lua](https://github.com/manoelcampos/xml2lua) - xml parsing library used to read Jacoco report (found under `lua/internal/*`)
-* [jacoco-parse](https://github.com/vokal/jacoco-parse) - inspiration for algo to interpret Jacoco report content
-
-
+* [jacoco-parse](https://github.com/vokal/jacoco-parse) - inspiration for algorithm to interpret Jacoco report content
 
