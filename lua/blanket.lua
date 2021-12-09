@@ -34,7 +34,7 @@ local register_buf_enter_ag = function()
         vim.cmd(string.format([[
             augroup %s
                 autocmd!
-                autocmd BufEnter %s :lua require'blanket'.refresh()
+                autocmd FileType %s :lua require'blanket'.refresh()
             augroup END
         ]], buf_enter_ag, M.__user_config.filetypes))
     end
