@@ -1,49 +1,53 @@
-# nvim-lua-plugin-template
+# BLANKET.NVIM 🛌🏻
+> Designed to induce that warm and fuzzy feeling of knowing that your code is covered
 
-This repository is a template for Neovim plugins written in Lua.
+# Overview
+This plugin provides a code coverage gutter in Neovim based on the Jacoco reports for Java projects.
 
-The intention is that you use this template to create a new repository where you then adapt this readme and add your plugin code.
-The template includes the following:
+### Features
+* Displaying `uncoverted`, `covered` and `partially covered` (not all code branches are executed) lines
+* Watch report for changes and refresh the coverage gutter
+* Autocomands to fire when specific file type is opened
 
-- Github workflows to run linters and tests
-- Minimal test setup
-- editorconfig
-- A .luacheckrc
+![example with all 3 types of signs](./images/coverage_example.png)
 
+# Configurations
+Only `report_path` is required, everything else is optional.
+```vim
 
-To get started writing a Lua plugin, I recommend reading the [nvim-lua-guide][nvim-lua-guide].
+lua << EOF
+    require'blanket'.setup{
+        -- can use env variables and anything that could be interpreted by expand(), see :h expandcmd()
+        -- REQUIRED
+        report_path = vim.fn.getcwd().."/target/site/jacoco/jacoco.xml",
+        -- refresh gutter every time we enter java file
+        -- defauls to empty - no autocmd is created
+        filetypes = "*.java",
+        -- for debugging purposes to see whether current file is present inside the report
+        -- defaults to false
+        silent = true,
+        -- can set the signs as well
+        signs = {
+            priority = 10,
+            incomplete_branch = "█",
+            uncovered = "█",
+            covered = "█",
+            sign_group = "Blanket"
+        },
+    }
+EOF
 
-## Scope
-
-Anything that the majority of plugin authors will want to have is in scope of
-this starter template. Anything that is controversial is out-of-scope.
-
----
-
-
-The remainder of the README is text that can be preserved in your plugin:
-
----
-
-
-## Development
-
-### Run tests
-
-
-Running tests requires [plenary.nvim][plenary] to be checked out in the parent directory of *this* repository.
-You can then run:
-
-```bash
-nvim --headless --noplugin -u tests/minimal.vim -c "PlenaryBustedDirectory tests/ {minimal_init = 'tests/minimal.vim'}"
 ```
 
-Or if you want to run a single test file:
+# Available functions
+* `:lua require'blanket'.start()` - start the plugin, useful when `filetype` property is not set
+* `:lua require'blanket'.stop()` - stop displaying coverage and cleanup autocmds, watcher etc.
+* `:lua require'blanket'.refresh()` - manually trigger a refresh of signs, useful when `filetype` property is not set
+* `:lua require'blanket'.set_report_path()` - change `report_path` to a new value and refresh the gutter based on the new report
 
-```bash
-nvim --headless --noplugin -u tests/minimal.vim -c "PlenaryBustedDirectory tests/path_to_file.lua {minimal_init = 'tests/minimal.vim'}"
-```
+# Credits
+* [xml2lua](https://github.com/manoelcampos/xml2lua) - xml parsing library used to read Jacoco report (found under `lua/internal/*`)
+* [jacoco-parse](https://github.com/vokal/jacoco-parse) - inspiration for algo to interpret Jacoco report content
 
 
-[nvim-lua-guide]: https://github.com/nanotee/nvim-lua-guide
-[plenary]: https://github.com/nvim-lua/plenary.nvim
+
