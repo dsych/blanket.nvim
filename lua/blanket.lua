@@ -47,7 +47,8 @@ M.refresh = function()
     if not is_loaded then
         print("please call setup")
         return
-    elseif M.__user_config.report_path == nil then
+    end
+    if M.__user_config.report_path == nil then
 
         if not M.__cached_report.silent then
             print"report path is not set!"
@@ -122,7 +123,9 @@ M.setup = function(config)
     is_loaded = true
 
     M.__user_config = vim.tbl_deep_extend("force", default_config, config)
-    M.__user_config.report_path = utils.expand_file_path(M.__user_config.report_path)
+    if M.__user_config.report_path == nil then
+        M.__user_config.report_path = utils.expand_file_path(M.__user_config.report_path)
+    end
 
     if not M.__user_config.silent then
         print(vim.inspect(M.__user_config))
