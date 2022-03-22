@@ -18,7 +18,7 @@ Only `report_path` is required, everything else is optional.
 lua << EOF
     require'blanket'.setup{
         -- can use env variables and anything that could be interpreted by expand(), see :h expandcmd()
-        -- REQUIRED
+        -- OPTIONAL
         report_path = vim.fn.getcwd().."/target/site/jacoco/jacoco.xml",
         -- refresh gutter every time we enter java file
         -- defauls to empty - no autocmd is created
@@ -43,7 +43,8 @@ EOF
 * `:lua require'blanket'.start()` - start the plugin, useful when `filetype` property is not set
 * `:lua require'blanket'.stop()` - stop displaying coverage and cleanup autocmds, watcher etc.
 * `:lua require'blanket'.refresh()` - manually trigger a refresh of signs, useful when `filetype` property is not set
-* `:lua require'blanket'.set_report_path()` - change `report_path` to a new value and refresh the gutter based on the new report
+* `:lua require'blanket'.pick_report_path()` - pick a new `report_path` and refresh the report
+* `:lua require'blanket'.set_report_path(<new_file_path>)` - change `report_path` to a new value and refresh the gutter based on the new report
 
 # Troubleshooting
 Before opening an issue, make sure to reproduce you problem with the minimal config from `examples/minimal.lua`.

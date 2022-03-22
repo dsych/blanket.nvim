@@ -47,6 +47,13 @@ M.refresh = function()
     if not is_loaded then
         print("please call setup")
         return
+    elseif M.__user_config.report_path == nil then
+
+        if not M.__cached_report.silent then
+            print"report path is not set!"
+        end
+
+        return
     end
 
     if M.__cached_report == nil then
@@ -83,7 +90,18 @@ M.stop = function()
     ]], buf_enter_ag))
 end
 
-M.set_report_path = function()
+M.set_report_path = function(report_path)
+    if not is_loaded then
+        print("please call setup")
+        return
+    end
+    if report_path then
+        M.__user_config.report_path = utils.expand_file_path(report_path)
+        ParseFile()
+    end
+end
+
+M.pick_report_path = function()
     if not is_loaded then
         print("please call setup")
         return
@@ -91,22 +109,13 @@ M.set_report_path = function()
 
     vim.ui.input({ prompt = "New report_path: ", completion = "file", default = M.__user_config.report_path },
         function(user_input)
-            if user_input then
-                M.__user_config.report_path = utils.expand_file_path(user_input)
-                ParseFile()
-            end
-
+            M.set_report_path(user_input)
         end
     )
 end
 
 M.setup = function(config)
     if is_loaded then
-        return
-    end
-
-    if config.report_path == nil then
-        print("report_path has to be set")
         return
     end
 
