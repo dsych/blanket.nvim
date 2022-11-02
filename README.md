@@ -33,6 +33,12 @@ lua << EOF
             uncovered = "█",
             covered = "█",
             sign_group = "Blanket"
+
+            -- and the highlights for each sign!
+            -- useful for themes where below highlights are similar
+            incomplete_branch_color = "WarningMsg",
+            covered_color = "Statement",
+            uncovered_color = "Error",
         },
     }
 EOF

@@ -12,6 +12,11 @@ local default_config = {
         incomplete_branch = "█",
         uncovered = "█",
         covered = "█",
+
+        incomplete_branch_color = "WarningMsg",
+        covered_color = "Statement",
+        uncovered_color = "Error",
+
         sign_group = "Blanket"
     },
 }
@@ -131,11 +136,19 @@ M.setup = function(config)
         print(vim.inspect(M.__user_config))
     end
 
-    vim.cmd(string.format([[
-        sign define CocCoverageUncovered text=%s texthl=Error
-        sign define CocCoverageCovered text=%s texthl=Statement
-        sign define CocCoverageMissingBranch text=%s texthl=WarningMsg
-    ]], M.__user_config.signs.uncovered, M.__user_config.signs.covered, M.__user_config.signs.incomplete_branch))
+    vim.cmd(string.format(
+        [[
+            sign define CocCoverageUncovered text=%s texthl=%s
+            sign define CocCoverageCovered text=%s texthl=%s
+            sign define CocCoverageMissingBranch text=%s texthl=%s
+        ]],
+        M.__user_config.signs.uncovered,
+        M.__user_config.signs.uncovered_color,
+        M.__user_config.signs.covered,
+        M.__user_config.signs.covered_color,
+        M.__user_config.signs.incomplete_branch,
+        M.__user_config.signs.incomplete_branch_color
+    ))
 
     register_buf_enter_ag()
 end
